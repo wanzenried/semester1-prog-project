@@ -5,17 +5,25 @@
 //  self written Libraries
 #include <debounce.h>
 
+//  other files
+#include <lcdController.h>
 
-//global variables
+
+//  Defines
+
+//  Global variables
 debounceBtn lBtn(7);
 debounceBtn mBtn(9);
 debounceBtn rBtn(11);
+
+
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("hello world");
-
+  lcdSetup();
+  
 }
 
 void loop() {
