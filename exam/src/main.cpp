@@ -5,6 +5,7 @@ const uint8_t lButton = 7;
 const uint8_t mButton = 9;
 const uint8_t rButton = 11;
 
+bool debounceButtonl();
 
 void setup() {
   // put your setup code here, to run once:
@@ -17,4 +18,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  if(debounceButtonl())
+  {
+    Serial.println("button pressed");
+  }
+  delay(1);
+}
+
+bool debounceButtonl()
+{
+  static uint16_t buttonstate = 0;
+  buttonstate = (buttonstate << 1) | (digitalRead(lButton));
+
+  return (buttonstate == 0x00FF);
 }
