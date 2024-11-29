@@ -1,20 +1,9 @@
 #include <lcdController.h>
 
+#include <customChars.h>
+
 const uint8_t lcdAddr = 0x27;
 
-
-//  bitmaps for the 8 custum characters used to show "pixels"
-uint8_t customChars[8][8] = 
-{
-    {0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000},
-    {0b01110, 0b01110, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000},
-    {0b01110, 0b01110, 0b00000, 0b01110, 0b01110, 0b00000, 0b00000, 0b00000},
-    {0b01110, 0b01110, 0b00000, 0b01110, 0b01110, 0b00000, 0b01110, 0b01110},
-    {0b00000, 0b00000, 0b00000, 0b01110, 0b01110, 0b00000, 0b00000, 0b00000},
-    {0b00000, 0b00000, 0b00000, 0b01110, 0b01110, 0b00000, 0b01110, 0b01110},
-    {0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b01110, 0b01110},
-    {0b01110, 0b01110, 0b00000, 0b00000, 0b00000, 0b00000, 0b01110, 0b01110}
-};
 
 LiquidCrystal_I2C lcd(lcdAddr,20,4);
 
@@ -27,25 +16,50 @@ void lcdSetup()
         lcd.createChar(i, customChars[i]);
     }
 
-    lcd.setCursor(0,0);
-    for (uint8_t i = 0; i < 8; i++)
+    
+
+    
+}
+
+void drawPixel(uint8_t x, uint8_t y, uint16_t *pixelArr)
+{
+    Serial.println(pixelArr[y],BIN);
+    pixelArr[y] = pixelArr[y] | (1<<x);
+    Serial.println(pixelArr[y],BIN);
+
+    updatePixelGroup(x,y,pixelArr);
+    
+}
+
+void clearPixel(uint8_t x, uint8_t y, uint16_t *pixelArr)
+{
+    pixelArr[y] = pixelArr[y] & ~(1<<x);
+    updatePixelGroup(x,y,pixelArr);
+}
+
+void updatePixelGroup(uint8_t x, uint8_t y, uint16_t *pixelArr)
+{
+    uint8_t lcdX = x/3;
+    uint8_t lcdY = 19-y;
+    lcd.setCursor(lcdY, lcdX);
+
+    uint8_t val = (pixelArr[y] >> (lcdX *3)) & 0b111;
+    lcd.write(val);
+}
+
+void drawAllPixels(uint16_t *pixels)
+{
+    for (uint8_t x = 0; x < 4; x++)
     {
-        lcd.write(i);
-    }
-    lcd.setCursor(0,1);
-    for (uint8_t i = 0; i < 20; i++)
-    {
-        lcd.write(0);
-    }
-    lcd.setCursor(0,2);
-    for (uint8_t i = 0; i < 20; i++)
-    {
-        lcd.write(0);
-    }
-    lcd.setCursor(0,3);
-    for (uint8_t i = 0; i < 20; i++)
-    {
-        lcd.write(0);
+        lcd.setCursor(0, x);
+
+        for (int8_t y = 19; y >= 0; y--)
+        {
+            uint8_t val = (pixels[y] >> x) & 0b111;
+            lcd.write(val);
+        }
+        
+
     }
     
 }
