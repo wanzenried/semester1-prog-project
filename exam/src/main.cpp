@@ -26,7 +26,6 @@ uint16_t score;
 piece p;
 
 void setup() {
-  // put your setup code here, to run once:
   lcdSetup();
   randomSeed(analogRead(0));
   gameSetup();

@@ -12,8 +12,8 @@ typedef struct vec2D
 
 typedef struct piece
 {
-  vec2D shape[4];
-  vec2D offset;
+  vec2D shape[4];     //  array to store the shape of the piece. Centered around 0,0 for easy rotation
+  vec2D offset;       //  offset vector is added to each part of the shape, to get correct location
 } piece;
 
 bool movePiece(piece *p, vec2D dir);
