@@ -22,10 +22,9 @@ uint16_t pixels[21];
 const unsigned long dropDelay = 500;
 unsigned long lastTimer = 0;
 
-uint16_t score = 0;
+uint16_t score;
 
-
-piece p = {{{-1.5,0.5}, {-0.5,0.5}, {0.5,0.5}, {1.5,0.5}}, {2.5,-0.5}};
+piece p;
 
 
 
@@ -40,7 +39,9 @@ void setup() {
   }
   pixels[20] = 0xffff;
 
-  drawShape(&p, pixels);
+  newPiece(&p, pixels);
+  score = 0;
+  lastTimer = millis();
 }
 
 void loop() {
@@ -71,8 +72,8 @@ void loop() {
       if(!newPiece(&p, pixels))
       {
         showScore(score);
-        while (true){}
-        
+        while (!mBtn.pressed()){}
+        setup();
       }
     }
   }

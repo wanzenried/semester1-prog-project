@@ -68,4 +68,6 @@ void showScore(uint16_t score)
     lcd.setCursor(6,2);
     lcd.print("Score: ");
     lcd.print(score);
+    lcd.setCursor(6,3);
+    lcd.print("Press blue");
 }
