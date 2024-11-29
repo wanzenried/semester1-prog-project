@@ -1,7 +1,7 @@
 #include <tetris.h>
 
 
-bool newPiece(piece *p, uint16_t *pixels)
+bool newPiece(piece *p)
 {
 
   switch (random(0,7))
@@ -65,43 +65,43 @@ bool newPiece(piece *p, uint16_t *pixels)
     int8_t nX = p->shape[i].x + p->offset.x;
     int8_t nY = p->shape[i].y + p->offset.y;
 
-    if((pixels[nY]>>(nX+1)) &1 ){
+    if(checkPixel(nX ,nY)){
       return false;
     }
   }
 
-  drawShape(p, pixels);
+  drawShape(p);
   return true;
 }
 
 
-void drawShape(piece *p, uint16_t *pixels)
+void drawShape(piece *p)
 {
   for (int i = 0; i < 4; i++)
   {
-    drawPixel(p->shape[i].x + p->offset.x, p->shape[i].y + p->offset.y, pixels);
+    drawPixel(p->shape[i].x + p->offset.x, p->shape[i].y + p->offset.y);
   }
 }
 
-void removeShape(piece *p, uint16_t *pixels)
+void removeShape(piece *p)
 {
   for (int i = 0; i < 4; i++)
   {
-    clearPixel(p->shape[i].x + p->offset.x, p->shape[i].y + p->offset.y, pixels);
+    clearPixel(p->shape[i].x + p->offset.x, p->shape[i].y + p->offset.y);
   }
 }
 
-bool movepiece(piece *p, vec2D dir, uint16_t *pixels)
+bool movepiece(piece *p, vec2D dir)
 {
-  removeShape(p, pixels);
+  removeShape(p);
   //  check if there is already pixels in the new location
   for (int i = 0; i < 4; i++)
   {
     int8_t nX = p->shape[i].x + p->offset.x + dir.x;
     int8_t nY = p->shape[i].y + p->offset.y + dir.y;
 
-    if((pixels[nY]>>(nX+1)) &1 ){
-      drawShape(p, pixels);
+    if(checkPixel(nX ,nY)){
+      drawShape(p);
       return false;
     }
   }
@@ -109,15 +109,15 @@ bool movepiece(piece *p, vec2D dir, uint16_t *pixels)
   p->offset.x += dir.x;
   p->offset.y += dir.y;
 
-  drawShape(p, pixels);
+  drawShape(p);
   return true;
 }
 
-bool rotatePiece(piece *p, vec2D rot, uint16_t *pixels)
+bool rotatePiece(piece *p, vec2D rot)
 {
   vec2D newPos[4];
 
-  removeShape(p, pixels);
+  removeShape(p);
   for (int i = 0; i < 4; i++)
   {
     newPos[i].x = p->shape[i].y * rot.x;
@@ -126,9 +126,9 @@ bool rotatePiece(piece *p, vec2D rot, uint16_t *pixels)
     int8_t nX = newPos[i].x + p->offset.x;
     int8_t nY = newPos[i].y + p->offset.y;
 
-    if((pixels[nY]>>(nX+1)) &1 )
+    if(checkPixel(nX, nY))
     {
-      drawShape(p, pixels);
+      drawShape(p);
       return false;
     }
   }
@@ -138,27 +138,27 @@ bool rotatePiece(piece *p, vec2D rot, uint16_t *pixels)
     p->shape[i] = newPos[i];
   }
 
-  drawShape(p, pixels);
+  drawShape(p);
   return true;
 }
 
-uint8_t lineClear(uint16_t *pixels)
+uint8_t lineClear()
 {
   uint8_t count = 0;
-  for (int i = 19; i > 0; i--)
+  for (int i = lcdCols; i > 1; i--)
   {
-    if (pixels[i] == 0x2001)
+    if (pixelArr[i] == 0x2001)
     {
       break;
     }
     
-    while (pixels[i] == 0x3FFF)
+    while (pixelArr[i] == 0x3FFF)
     {
       count++;
       for (int j = i; j > 0; j--)
       {
-        pixels[j] = pixels[j-1];
-        if (pixels[j] == 0x2001)
+        pixelArr[j] = pixelArr[j-1];
+        if (pixelArr[j] == 0x2001)
         {
           break;
         }
@@ -169,7 +169,7 @@ uint8_t lineClear(uint16_t *pixels)
   }
   if (count > 0)
   {
-    drawAllPixels(pixels);
+    drawAllPixels();
   }
   
 

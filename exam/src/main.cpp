@@ -16,8 +16,6 @@ debounceBtn lBtn(7);
 debounceBtn mBtn(9);
 debounceBtn rBtn(11);
 
-//  array for storing pixels on the screen
-uint16_t pixels[21];
 
 const unsigned long dropDelay = 500;
 unsigned long lastTimer = 0;
@@ -33,13 +31,14 @@ void setup() {
   lcdSetup();
   randomSeed(analogRead(0));
 
-  for (int i = 0; i < 20; i++)
+  pixelArr[0] = 0xffff;
+  for (int i = 0; i < lcdCols; i++)
   {
-    pixels[i] = 0x2001;
+    pixelArr[i+1] = 0x2001;
   }
-  pixels[20] = 0xffff;
+  pixelArr[lcdCols+1] = 0xffff;
 
-  newPiece(&p, pixels);
+  newPiece(&p);
   score = 0;
   lastTimer = millis();
 }
@@ -48,17 +47,17 @@ void loop() {
   // put your main code here, to run repeatedly:
   if(lBtn.pressed())
   {
-    movepiece(&p, {-1,0}, pixels);
+    movepiece(&p, {-1,0});
   }
 
   if(mBtn.pressed())
   {
-    rotatePiece(&p, {-1,1}, pixels);
+    rotatePiece(&p, {-1,1});
   }
 
   if(rBtn.pressed())
   {
-    movepiece(&p, {1,0}, pixels);
+    movepiece(&p, {1,0});
   }
   
 
@@ -66,10 +65,10 @@ void loop() {
   {
     lastTimer = millis();
   
-    if(!movepiece(&p, {0,1}, pixels))
+    if(!movepiece(&p, {0,1}))
     {
-      score += lineClear(pixels);
-      if(!newPiece(&p, pixels))
+      score += lineClear();
+      if(!newPiece(&p))
       {
         showScore(score);
         while (!mBtn.pressed()){}

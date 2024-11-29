@@ -2,10 +2,10 @@
 
 #include <customChars.h>
 
-const uint8_t lcdAddr = 0x27;
+uint16_t pixelArr[lcdCols + 2];
 
-
-LiquidCrystal_I2C lcd(lcdAddr,20,4);
+//const uint8_t lcdAddr = 0x27;
+LiquidCrystal_I2C lcd(lcdAddr, lcdCols, lcdRows);
 
 void lcdSetup()
 {
@@ -15,49 +15,51 @@ void lcdSetup()
     {
         lcd.createChar(i, customChars[i]);
     }
-
 }
 
-void drawPixel(uint8_t x, uint8_t y, uint16_t *pixelArr)
+void drawPixel(uint8_t x, uint8_t y)
 {
+    y++;    // skipping buffer row
     pixelArr[y] = pixelArr[y] | (1<<(x+1));
-
-    updatePixelGroup(x,y,pixelArr);
-    
+    updatePixelGroup(x,y);
 }
 
-void clearPixel(uint8_t x, uint8_t y, uint16_t *pixelArr)
+void clearPixel(uint8_t x, uint8_t y)
 {
+    y++;    // skipping buffer row
     pixelArr[y] = pixelArr[y] & ~(1<<(x+1));
-    updatePixelGroup(x,y,pixelArr);
+    updatePixelGroup(x,y);
 }
 
-void updatePixelGroup(uint8_t x, uint8_t y, uint16_t *pixelArr)
+bool checkPixel(uint8_t x, uint8_t y)
+{
+    y++;    // skipping buffer row
+    x++;    // skipping buffer row
+    return (pixelArr[y]>>x) &1;
+}
+
+void updatePixelGroup(uint8_t x, uint8_t y)
 {
     uint8_t lcdX = x/3;
-    uint8_t lcdY = 19-y;
+    uint8_t lcdY = lcdCols-y;
     lcd.setCursor(lcdY, lcdX);
 
     uint8_t val = (pixelArr[y] >> ((lcdX *3)+1)) & 0b111;
     lcd.write(val);
 }
 
-void drawAllPixels(uint16_t *pixels)
+void drawAllPixels()
 {
     lcd.clear();
     for (uint8_t x = 0; x < 4; x++)
     {
         lcd.setCursor(0, x);
-
-        for (int8_t y = 19; y >= 0; y--)
+        for (int8_t y = lcdCols; y > 0; y--)
         {
-            uint8_t val = (pixels[y] >> ((x*3)+1)) & 0b111;
+            uint8_t val = (pixelArr[y] >> ((x*3)+1)) & 0b111;
             lcd.write(val);
         }
-        
-
     }
-    
 }
 
 void showScore(uint16_t score)
