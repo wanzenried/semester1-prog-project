@@ -4,13 +4,14 @@
 
 uint16_t pixelArr[lcdCols + 2];
 
-//const uint8_t lcdAddr = 0x27;
 LiquidCrystal_I2C lcd(lcdAddr, lcdCols, lcdRows);
 
 void lcdSetup()
 {
     lcd.init();
     lcd.backlight();
+
+    //  Load in custom characters from customChars.h
     for (uint8_t i = 0; i < 8; i++)
     {
         lcd.createChar(i, customChars[i]);
@@ -44,16 +45,17 @@ void updatePixelGroup(uint8_t x, uint8_t y)
     uint8_t lcdY = lcdCols-y;
     lcd.setCursor(lcdY, lcdX);
 
-    uint8_t val = (pixelArr[y] >> ((lcdX *3)+1)) & 0b111;
+    uint8_t val = (pixelArr[y] >> ((lcdX *3)+1)) & 0b111;   //  Indexing into the pixel array (see visualization in lcdController.h), and using a bitmask to get 3 bit value corresponding to the correct custom character 
     lcd.write(val);
 }
 
 void drawAllPixels()
 {
     lcd.clear();
-    for (uint8_t x = 0; x < 4; x++)
+    for (uint8_t x = 0; x < lcdRows; x++)
     {
         lcd.setCursor(0, x);
+        //  counting "backwards", because lcd 0,0 is different to pixel array 0,0
         for (int8_t y = lcdCols; y > 0; y--)
         {
             uint8_t val = (pixelArr[y] >> ((x*3)+1)) & 0b111;

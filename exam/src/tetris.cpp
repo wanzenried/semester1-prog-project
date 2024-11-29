@@ -1,77 +1,79 @@
 #include <tetris.h>
 
-
+//  Creates a new piece to drop and checks if it is able to be placed
+//  returns true if able to place new piece, else false
 bool newPiece(piece *p)
 {
 
-  switch (random(0,7))
-  {
-  case 0:
-    p->offset = {6,2};
-    p->shape[0] = {-1,0};
-    p->shape[1] = {0,0};
-    p->shape[2] = {0,1};
-    p->shape[3] = {1,1};
-    break;
-  case 1:
-    p->offset = {6,2};
-    p->shape[0] = {-1,1};
-    p->shape[1] = {0,1};
-    p->shape[2] = {0,0};
-    p->shape[3] = {1,0};
-    break;
-  case 2:
-    p->offset = {6,2};
-    p->shape[0] = {-1,0};
-    p->shape[1] = {-1,1};
-    p->shape[2] = {0,0};
-    p->shape[3] = {1,0};
-    break;
-  case 3:
-    p->offset = {6,2};
-    p->shape[0] = {-1,0};
-    p->shape[1] = {0,0};
-    p->shape[2] = {1,0};
-    p->shape[3] = {1,1};
-    break;
-  case 4:
-    p->offset = {6,2};
-    p->shape[0] = {-1,0};
-    p->shape[1] = {0,0};
-    p->shape[2] = {0,1};
-    p->shape[3] = {1,0};
-    break;
-  case 5:
-    p->offset = {5.5,2.5};
-    p->shape[0] = {-0.5,-0.5};
-    p->shape[1] = {-0.5,0.5};
-    p->shape[2] = {0.5,-0.5};
-    p->shape[3] = {0.5,0.5};
-    break;
-  case 6:
-    p->offset = {4.5,1.5};
-    p->shape[0] = {-1.5,0.5};
-    p->shape[1] = {-0.5,0.5};
-    p->shape[2] = {0.5,0.5};
-    p->shape[3] = {1.5,0.5};
-    break;
-    
-  default:
-    break;
-  }
-
-  for (int i = 0; i < 4; i++)
-  {
-    int8_t nX = p->shape[i].x + p->offset.x;
-    int8_t nY = p->shape[i].y + p->offset.y;
-
-    if(checkPixel(nX ,nY)){
-      return false;
+    switch (random(0,7))
+    {
+    case 0:       //  reverse S shape
+        p->offset = {6,1};
+        p->shape[0] = {-1,0};
+        p->shape[1] = {0,0};
+        p->shape[2] = {0,1};
+        p->shape[3] = {1,1};
+        break;
+    case 1:       //  S shape
+        p->offset = {6,1};
+        p->shape[0] = {-1,1};
+        p->shape[1] = {0,1};
+        p->shape[2] = {0,0};
+        p->shape[3] = {1,0};
+        break;
+    case 2:       //  L shape
+        p->offset = {6,1};
+        p->shape[0] = {-1,0};
+        p->shape[1] = {-1,1};
+        p->shape[2] = {0,0};
+        p->shape[3] = {1,0};
+        break;
+    case 3:       //  reverse L shape
+        p->offset = {6,1};
+        p->shape[0] = {-1,0};
+        p->shape[1] = {0,0};
+        p->shape[2] = {1,0};
+        p->shape[3] = {1,1};
+        break;
+    case 4:       //  T shape
+        p->offset = {6,1};
+        p->shape[0] = {-1,0};
+        p->shape[1] = {0,0};
+        p->shape[2] = {0,1};
+        p->shape[3] = {1,0};
+        break;
+    case 5:       //  Square
+        p->offset = {5.5,1.5};
+        p->shape[0] = {-0.5,-0.5};
+        p->shape[1] = {-0.5,0.5};
+        p->shape[2] = {0.5,-0.5};
+        p->shape[3] = {0.5,0.5};
+        break;
+    case 6:       //  Line
+        p->offset = {4.5,0.5};
+        p->shape[0] = {-1.5,0.5};
+        p->shape[1] = {-0.5,0.5};
+        p->shape[2] = {0.5,0.5};
+        p->shape[3] = {1.5,0.5};
+        break;
+        
+    default:
+        break;
     }
-  }
 
-  drawShape(p);
-  return true;
+    //  check if piece can be placed
+    for (int i = 0; i < 4; i++)
+    {
+        int8_t nX = p->shape[i].x + p->offset.x;
+        int8_t nY = p->shape[i].y + p->offset.y;
+
+        if(checkPixel(nX ,nY)){
+        return false;
+        }
+    }
+
+    drawShape(p);
+    return true;
 }
 
 
@@ -91,7 +93,9 @@ void removeShape(piece *p)
   }
 }
 
-bool movepiece(piece *p, vec2D dir)
+//  tries to move piece accoring to the dir vector
+//  returns true if the piece was moved, otherwise false
+bool movePiece(piece *p, vec2D dir)
 {
   removeShape(p);
   //  check if there is already pixels in the new location
@@ -113,6 +117,8 @@ bool movepiece(piece *p, vec2D dir)
   return true;
 }
 
+//  tries to rotate piece accoring to the dir vector
+//  returns true if the piece was rotated, otherwise false
 bool rotatePiece(piece *p, vec2D rot)
 {
   vec2D newPos[4];
@@ -142,16 +148,23 @@ bool rotatePiece(piece *p, vec2D rot)
   return true;
 }
 
+//  Checks if lines are full and clears them if they are
+//  returns amount of lines cleared
 uint8_t lineClear()
 {
   uint8_t count = 0;
+
+  //    go through each line starting from the bottom
   for (int i = lcdCols; i > 1; i--)
   {
+    //  if we reach an empty line all lines above it will also be empty, so there is no need to search more lines
     if (pixelArr[i] == 0x2001)
     {
       break;
     }
     
+    //  Whenever we are at a filled in line, move all lines above it one line "down"
+    //  and increment amount of lines cleared
     while (pixelArr[i] == 0x3FFF)
     {
       count++;
@@ -167,11 +180,12 @@ uint8_t lineClear()
       
     }
   }
+
+  //    if any line were removed, redraw all pixels
   if (count > 0)
   {
     drawAllPixels();
   }
-  
 
   return count;
   

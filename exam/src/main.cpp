@@ -1,36 +1,52 @@
 //  Libraries
 #include <Arduino.h>
-#include <LiquidCrystal_I2C.h>
 
-//  self written Libraries
+//  my Libraries
 #include <debounce.h>
 
 //  other files
 #include <lcdController.h>
 #include <tetris.h>
 
-//  Defines
+//  function prototypes
+void gameSetup();
+void getInput();
+void doGameLoop();
 
 //  Global variables
 debounceBtn lBtn(7);
 debounceBtn mBtn(9);
 debounceBtn rBtn(11);
 
-
-const unsigned long dropDelay = 500;
+const unsigned long dropDelay = 400;
 unsigned long lastTimer = 0;
 
 uint16_t score;
 
 piece p;
 
-
-
 void setup() {
   // put your setup code here, to run once:
   lcdSetup();
   randomSeed(analogRead(0));
+  gameSetup();
+}
 
+void loop() {
+  getInput();
+
+  if (millis() - lastTimer > dropDelay)
+  {
+    lastTimer = millis();
+    doGameLoop();
+  }
+  delay(1);
+}
+
+//  Initialize the pixelarray, with pixels "set" in the buffer areas
+//  reset score and timer, and create a new falling piece
+void gameSetup()
+{
   pixelArr[0] = 0xffff;
   for (int i = 0; i < lcdCols; i++)
   {
@@ -43,11 +59,11 @@ void setup() {
   lastTimer = millis();
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+void getInput()
+{
   if(lBtn.pressed())
   {
-    movepiece(&p, {-1,0});
+    movePiece(&p, {-1,0});
   }
 
   if(mBtn.pressed())
@@ -57,26 +73,28 @@ void loop() {
 
   if(rBtn.pressed())
   {
-    movepiece(&p, {1,0});
+    movePiece(&p, {1,0});
   }
-  
-
-  if (millis() - lastTimer > dropDelay)
-  {
-    lastTimer = millis();
-  
-    if(!movepiece(&p, {0,1}))
-    {
-      score += lineClear();
-      if(!newPiece(&p))
-      {
-        showScore(score);
-        while (!mBtn.pressed()){}
-        setup();
-      }
-    }
-  }
-  
-  delay(1);
 }
 
+void doGameLoop()
+{
+  //  move the dropping piece down 1 pixel
+  if(movePiece(&p, {0,1}))
+  {
+    return;
+  }
+
+  //  if dropping piece could not be moved down, check if any lines were cleared
+  //  and try to create a new piece
+  score += lineClear();
+  if(newPiece(&p))
+  {
+    return;
+  }
+
+  //  if it was not possible to create a new piece, end the game
+  showScore(score);
+  while (!mBtn.pressed()){}
+  gameSetup();
+}

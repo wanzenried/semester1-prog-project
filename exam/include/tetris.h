@@ -16,7 +16,7 @@ typedef struct piece
   vec2D offset;
 } piece;
 
-bool movepiece(piece *p, vec2D dir);
+bool movePiece(piece *p, vec2D dir);
 bool rotatePiece(piece *p ,vec2D rot);
 bool newPiece(piece *p);
 void drawShape(piece *p);
