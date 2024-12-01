@@ -36,7 +36,7 @@ bool newPiece(piece *p)
         p->shape[3] = {1,1};
         break;
     case 4:       //  T shape
-        p->offset = {6,1};
+        p->offset = {7,1};
         p->shape[0] = {-1,0};
         p->shape[1] = {0,0};
         p->shape[2] = {0,1};
