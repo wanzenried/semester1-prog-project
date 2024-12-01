@@ -35,7 +35,7 @@ void clearPixel(uint8_t x, uint8_t y)
 bool checkPixel(uint8_t x, uint8_t y)
 {
     y++;    // skipping buffer row
-    x++;    // skipping buffer row
+    x++;    // skipping buffer column
     return (pixelArr[y]>>x) &1;
 }
 
