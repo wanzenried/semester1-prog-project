@@ -18,7 +18,7 @@ debounceBtn lBtn(7);
 debounceBtn mBtn(9);
 debounceBtn rBtn(11);
 
-const unsigned long dropDelay = 400;
+unsigned long dropDelay = 400;
 unsigned long lastTimer = 0;
 
 uint16_t score;
@@ -87,7 +87,12 @@ void doGameLoop()
 
   //  if dropping piece could not be moved down, check if any lines were cleared
   //  and try to create a new piece
-  score += lineClear();
+  uint8_t lines = lineClear();
+  if (lines > 0)
+  {
+    dropDelay--;
+    score += lines;
+  }
   if(newPiece(&p))
   {
     return;
