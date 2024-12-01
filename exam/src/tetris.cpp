@@ -2,7 +2,7 @@
 
 //  Creates a new piece to drop and checks if it is able to be placed
 //  returns true if able to place new piece, else false
-bool newPiece(piece *p)
+bool newPiece(tPiece *p)
 {
 
     switch (random(0,7))
@@ -77,7 +77,7 @@ bool newPiece(piece *p)
 }
 
 
-void drawShape(piece *p)
+void drawShape(tPiece *p)
 {
   for (int i = 0; i < 4; i++)
   {
@@ -85,7 +85,7 @@ void drawShape(piece *p)
   }
 }
 
-void removeShape(piece *p)
+void removeShape(tPiece *p)
 {
   for (int i = 0; i < 4; i++)
   {
@@ -95,7 +95,7 @@ void removeShape(piece *p)
 
 //  tries to move piece accoring to the dir vector
 //  returns true if the piece was moved, otherwise false
-bool movePiece(piece *p, vec2D dir)
+bool movePiece(tPiece *p, vec2D dir)
 {
   removeShape(p);
   //  check if there is already pixels in the new location
@@ -119,7 +119,7 @@ bool movePiece(piece *p, vec2D dir)
 
 //  tries to rotate piece accoring to the dir vector
 //  returns true if the piece was rotated, otherwise false
-bool rotatePiece(piece *p, vec2D rot)
+bool rotatePiece(tPiece *p, vec2D rot)
 {
   vec2D newPos[4];
 

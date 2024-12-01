@@ -23,7 +23,7 @@ unsigned long lastTimer = 0;
 
 uint16_t score;
 
-piece p;
+tPiece piece;
 
 void setup() {
   lcdSetup();
@@ -54,7 +54,7 @@ void gameSetup()
   pixelArr[lcdCols+1] = 0xffff;
   drawAllPixels();
 
-  newPiece(&p);
+  newPiece(&piece);
   score = 0;
   lastTimer = millis();
 }
@@ -63,24 +63,24 @@ void getInput()
 {
   if(lBtn.pressed())
   {
-    movePiece(&p, {-1,0});
+    movePiece(&piece, {-1,0});
   }
 
   if(mBtn.pressed())
   {
-    rotatePiece(&p, {-1,1});
+    rotatePiece(&piece, {-1,1});
   }
 
   if(rBtn.pressed())
   {
-    movePiece(&p, {1,0});
+    movePiece(&piece, {1,0});
   }
 }
 
 void doGameLoop()
 {
   //  move the dropping piece down 1 pixel
-  if(movePiece(&p, {0,1}))
+  if(movePiece(&piece, {0,1}))
   {
     return;
   }
@@ -93,7 +93,7 @@ void doGameLoop()
     dropDelay--;
     score += lines;
   }
-  if(newPiece(&p))
+  if(newPiece(&piece))
   {
     return;
   }
