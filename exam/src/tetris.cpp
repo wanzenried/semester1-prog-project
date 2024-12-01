@@ -99,7 +99,7 @@ bool movePiece(piece *p, vec2D dir)
 {
   removeShape(p);
   //  check if there is already pixels in the new location
-  for (int i = 0; i < 4; i++)
+  for (int8_t i = 0; i < 4; i++)
   {
     int8_t nX = p->shape[i].x + p->offset.x + dir.x;
     int8_t nY = p->shape[i].y + p->offset.y + dir.y;
@@ -124,7 +124,7 @@ bool rotatePiece(piece *p, vec2D rot)
   vec2D newPos[4];
 
   removeShape(p);
-  for (int i = 0; i < 4; i++)
+  for (int8_t i = 0; i < 4; i++)
   {
     newPos[i].x = p->shape[i].y * rot.x;
     newPos[i].y = p->shape[i].x * rot.y;
@@ -139,7 +139,7 @@ bool rotatePiece(piece *p, vec2D rot)
     }
   }
 
-  for (int i = 0; i < 4; i++)
+  for (int8_t i = 0; i < 4; i++)
   {
     p->shape[i] = newPos[i];
   }
@@ -155,7 +155,7 @@ uint8_t lineClear()
   uint8_t count = 0;
 
   //    go through each line starting from the bottom
-  for (int i = lcdCols; i > 1; i--)
+  for (int8_t i = lcdCols; i > 1; i--)
   {
     //  if we reach an empty line all lines above it will also be empty, so there is no need to search more lines
     if (pixelArr[i] == 0x2001)
@@ -168,7 +168,7 @@ uint8_t lineClear()
     while (pixelArr[i] == 0x3FFF)
     {
       count++;
-      for (int j = i; j > 0; j--)
+      for (int8_t j = i; j > 0; j--)
       {
         pixelArr[j] = pixelArr[j-1];
         if (pixelArr[j] == 0x2001)
