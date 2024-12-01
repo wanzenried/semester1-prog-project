@@ -52,6 +52,7 @@ void gameSetup()
     pixelArr[i+1] = 0x2001;
   }
   pixelArr[lcdCols+1] = 0xffff;
+  drawAllPixels();
 
   newPiece(&p);
   score = 0;
