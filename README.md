@@ -17,3 +17,6 @@ The project is fairly simple hardware wise, only using four different component 
 
 ## How to make your own
 I might do a writeup on how to build one of these in the future
+
+### License
+This project is licensed under [The MIT License](License)
